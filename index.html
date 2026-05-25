@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ujian Online: Dasar-Dasar Greenfoot</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Custom scrollbar for beautiful UI */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <!-- HEADER / NAVIGATION BAR -->
+    <header class="bg-indigo-900 text-white shadow-md py-4 px-6 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg">
+                    <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="text-lg font-bold tracking-tight">E-Exam Computer Science</h1>
+                    <p class="text-xs text-indigo-200">Evaluasi Pembelajaran Pemrograman Greenfoot</p>
+                </div>
+            </div>
+            
+            <!-- Timer Display (Hidden on Login Page) -->
+            <div id="timer-container" class="hidden flex items-center space-x-2 bg-indigo-850 border border-indigo-700 px-4 py-2 rounded-full shadow-inner">
+                <i data-lucide="timer" class="w-5 h-5 text-amber-400 animate-pulse"></i>
+                <span class="text-xs text-indigo-200 uppercase font-semibold">Sisa Waktu:</span>
+                <span id="countdown" class="font-mono font-bold text-white text-lg">60:00</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 flex flex-col justify-center">
+
+        <!-- 1. LOGIN / FORM IDENTITAS -->
+        <section id="login-section" class="max-w-md w-full mx-auto bg-white rounded-2xl shadow-xl border border-slate-100 p-8 my-8 transition-all duration-300 transform hover:scale-[1.01]">
+            <div class="text-center mb-8">
+                <div class="inline-flex p-4 bg-indigo-50 text-indigo-600 rounded-full mb-4">
+                    <i data-lucide="user-check" class="w-10 h-10"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-900">Ujian Teori Greenfoot</h2>
+                <p class="text-sm text-slate-500 mt-2">Silakan isi identitas Anda untuk memulai ujian.</p>
+            </div>
+
+            <form id="identity-form" onsubmit="startExam(event)" class="space-y-6">
+                <div>
+                    <label for="student-name" class="block text-sm font-semibold text-slate-700 mb-2">Nama Lengkap</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i data-lucide="user" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="student-name" required placeholder="Masukkan nama lengkap Anda"
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    </div>
+                </div>
+
+                <div>
+                    <label for="student-class" class="block text-sm font-semibold text-slate-700 mb-2">Kelas / Tingkat</label>
+                    <div class="relative">
+                        <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                            <i data-lucide="school" class="w-5 h-5"></i>
+                        </span>
+                        <input type="text" id="student-class" required placeholder="Contoh: XI - RPL 1 / Kelas 10"
+                            class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all">
+                    </div>
+                </div>
+
+                <!-- Info Ujian -->
+                <div class="bg-indigo-50 rounded-xl p-4 border border-indigo-100 space-y-2">
+                    <h4 class="text-xs font-bold text-indigo-900 uppercase tracking-wider flex items-center">
+                        <i data-lucide="info" class="w-4 h-4 mr-1.5 text-indigo-600"></i> Ketentuan Ujian
+                    </h4>
+                    <ul class="text-xs text-indigo-950 space-y-1 list-disc list-inside opacity-90">
+                        <li>Jumlah soal: 50 butir pilihan ganda (A, B, C, D, E)</li>
+                        <li>Durasi waktu pengerjaan: 60 Menit</li>
+                        <li>Nilai Kelulusan Minimal (KKM): 75</li>
+                        <li>Ujian akan otomatis tersubmit saat waktu habis</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg hover:shadow-indigo-500/20 active:transform active:scale-95 transition-all flex justify-center items-center space-x-2">
+                    <span>Mulai Ujian Sekarang</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- 2. MAIN EXAM INTERFACE (GRID LAYOUT) -->
+        <section id="exam-section" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6 my-4">
+            
+            <!-- Left Side: Question and Options (Takes 3 columns) -->
+            <div class="lg:col-span-3 flex flex-col space-y-6">
+                <!-- Question Card -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 md:p-8 flex-grow flex flex-col justify-between">
+                    <div>
+                        <!-- Header Question: Number and Actions -->
+                        <div class="flex justify-between items-center pb-4 mb-6 border-b border-slate-100">
+                            <span class="bg-indigo-100 text-indigo-800 text-sm font-bold px-4 py-1.5 rounded-full">
+                                SOAL <span id="current-question-num">1</span> DARI 50
+                            </span>
+                            <button onclick="toggleFlag()" id="btn-flag" class="flex items-center space-x-2 text-slate-500 hover:text-amber-600 font-medium text-sm transition-all px-3 py-1.5 rounded-lg hover:bg-slate-50">
+                                <i data-lucide="bookmark" id="icon-flag" class="w-4 h-4"></i>
+                                <span id="text-flag">Tandai Ragu-ragu</span>
+                            </button>
+                        </div>
+
+                        <!-- Question Text -->
+                        <div class="prose max-w-none text-slate-800 font-semibold text-base md:text-lg mb-8 leading-relaxed" id="question-text">
+                            <!-- Question text dynamically injected here -->
+                        </div>
+
+                        <!-- Options Container -->
+                        <div class="space-y-4" id="options-container">
+                            <!-- Options dynamically injected here -->
+                        </div>
+                    </div>
+
+                    <!-- Navigation Action Buttons -->
+                    <div class="flex justify-between items-center mt-12 pt-6 border-t border-slate-100">
+                        <button onclick="prevQuestion()" id="btn-prev" class="flex items-center space-x-2 text-slate-600 bg-slate-100 hover:bg-slate-200 font-semibold px-5 py-2.5 rounded-xl disabled:opacity-50 disabled:pointer-events-none transition-all">
+                            <i data-lucide="chevron-left" class="w-5 h-5"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+                        
+                        <button onclick="nextQuestion()" id="btn-next" class="flex items-center space-x-2 text-white bg-indigo-600 hover:bg-indigo-700 font-semibold px-5 py-2.5 rounded-xl disabled:opacity-50 transition-all">
+                            <span>Berikutnya</span>
+                            <i data-lucide="chevron-right" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: Sidebar Navigation Grid (Takes 1 column) -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- User Profile Summary inside Sidebar -->
+                <div class="bg-indigo-950 text-white rounded-2xl p-5 shadow-md">
+                    <p class="text-xs text-indigo-300 uppercase tracking-wider font-semibold">Peserta Ujian</p>
+                    <h3 id="display-user-name" class="font-bold text-lg truncate mt-0.5">M. Fadli</h3>
+                    <p id="display-user-class" class="text-xs text-indigo-200 truncate">Kelas XI RPL 1</p>
+                </div>
+
+                <!-- Numbers Panel Grid -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 flex flex-col">
+                    <h3 class="text-sm font-bold text-slate-700 mb-4 flex items-center justify-between">
+                        <span>Peta Navigasi Soal</span>
+                        <span id="answered-indicator" class="text-xs font-normal text-slate-500">0/50 Terjawab</span>
+                    </h3>
+                    
+                    <!-- Scrollable box for grid of 50 numbers -->
+                    <div class="grid grid-cols-5 sm:grid-cols-10 lg:grid-cols-5 gap-2 max-h-[300px] overflow-y-auto pr-1" id="nav-grid-container">
+                        <!-- 50 buttons dynamic generation -->
+                    </div>
+
+                    <!-- Legend -->
+                    <div class="grid grid-cols-2 gap-2 mt-6 pt-4 border-t border-slate-100 text-[11px] text-slate-500">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3.5 h-3.5 bg-indigo-600 rounded"></div>
+                            <span>Aktif</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3.5 h-3.5 bg-emerald-500 rounded"></div>
+                            <span>Terjawab</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3.5 h-3.5 bg-amber-500 rounded"></div>
+                            <span>Ragu-ragu</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-3.5 h-3.5 bg-slate-200 rounded"></div>
+                            <span>Belum Diisi</span>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button onclick="openSubmitModal()" class="w-full mt-6 bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-rose-600/10 hover:shadow-rose-600/20 active:transform active:scale-95 transition-all flex justify-center items-center space-x-2">
+                        <i data-lucide="check-square" class="w-5 h-5"></i>
+                        <span>Selesaikan Ujian</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. REVIEW / RESULTS PAGE -->
+        <section id="results-section" class="hidden max-w-4xl w-full mx-auto my-6 space-y-8">
+            <!-- Score Card Summary -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-100 overflow-hidden">
+                <div class="bg-gradient-to-r from-indigo-900 to-slate-900 p-8 text-white relative">
+                    <div class="absolute right-0 top-0 opacity-10 transform translate-x-12 -translate-y-12">
+                        <i data-lucide="award" class="w-72 h-72"></i>
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
+                        <div class="text-center md:text-left space-y-2">
+                            <span class="bg-indigo-500/20 text-indigo-300 font-bold tracking-wide text-xs px-3.5 py-1.5 rounded-full uppercase border border-indigo-500/30">Hasil Evaluasi Teori</span>
+                            <h2 class="text-3xl font-extrabold" id="result-student-name">M. Fadli</h2>
+                            <p class="text-sm text-indigo-200 flex items-center justify-center md:justify-start">
+                                <i data-lucide="school" class="w-4 h-4 mr-1.5"></i>
+                                <span id="result-student-class">Kelas XI RPL 1</span>
+                            </p>
+                        </div>
+
+                        <!-- Round Score Display -->
+                        <div class="flex flex-col items-center justify-center bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/10 w-44">
+                            <p class="text-xs text-indigo-200 font-semibold uppercase tracking-widest">Skor Akhir</p>
+                            <span class="text-5xl font-black mt-2 text-white" id="display-final-score">84</span>
+                            <span class="text-[11px] text-indigo-300 mt-1" id="display-score-fraction">42 dari 50 Soal Benar</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Stats Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-4 border-b border-slate-100 text-center">
+                    <div class="p-6 border-r border-slate-100 flex flex-col justify-center items-center">
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600 mb-2">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xs text-slate-400 font-medium uppercase">Jawaban Benar</span>
+                        <span class="text-xl font-bold text-slate-800 mt-1" id="stat-correct">0</span>
+                    </div>
+                    <div class="p-6 border-r border-slate-100 flex flex-col justify-center items-center">
+                        <div class="w-10 h-10 rounded-full bg-rose-50 flex items-center justify-center text-rose-600 mb-2">
+                            <i data-lucide="x-circle" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xs text-slate-400 font-medium uppercase">Jawaban Salah</span>
+                        <span class="text-xl font-bold text-slate-800 mt-1" id="stat-incorrect">0</span>
+                    </div>
+                    <div class="p-6 border-r border-slate-100 flex flex-col justify-center items-center">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600 mb-2">
+                            <i data-lucide="help-circle" class="w-5 h-5"></i>
+                        </div>
+                        <span class="text-xs text-slate-400 font-medium uppercase">Belum Terjawab</span>
+                        <span class="text-xl font-bold text-slate-800 mt-1" id="stat-unanswered">0</span>
+                    </div>
+                    <div class="p-6 flex flex-col justify-center items-center">
+                        <div id="status-badge-container" class="px-4 py-2 rounded-xl text-center w-full">
+                            <span class="text-xs font-semibold uppercase block" id="result-status-title">Status</span>
+                            <span class="text-lg font-black block mt-0.5" id="result-status-text">LULUS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions inside results panel -->
+                <div class="p-6 bg-slate-50 flex flex-col sm:flex-row gap-3 justify-between items-center border-t border-slate-100">
+                    <button onclick="window.print()" class="w-full sm:w-auto bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2.5 px-5 rounded-xl shadow transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                        <span>Cetak Bukti Ujian</span>
+                    </button>
+                    <button onclick="location.reload()" class="w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-xl shadow transition-all flex items-center justify-center space-x-2">
+                        <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                        <span>Ulangi Simulasi</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Answer Review -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-xl font-bold text-slate-900">Analisis Hasil & Kunci Jawaban</h3>
+                    <div class="flex space-x-2">
+                        <select id="review-filter" onchange="filterReviews()" class="bg-white border border-slate-200 text-sm rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="all">Semua Soal</option>
+                            <option value="correct">Hanya Benar</option>
+                            <option value="incorrect">Hanya Salah</option>
+                            <option value="unanswered">Tidak Dijawab</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- Questions Container for Review -->
+                <div class="space-y-6" id="review-list-container">
+                    <!-- Dynamic Generation of answer checks with full styling and feedback -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-6 mt-12">
+        <div class="max-w-7xl mx-auto px-6 text-center text-sm text-slate-400">
+            <p>&copy; 2026 Platform Ujian Interaktif Greenfoot Java. Dikembangkan untuk keperluan edukasi dan evaluasi mandiri.</p>
+        </div>
+    </footer>
+
+    <!-- CONFIRMATION MODAL -->
+    <div id="submit-modal" class="hidden fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-slate-900/60 transition-opacity"></div>
+        
+        <!-- Content -->
+        <div class="relative bg-white rounded-2xl max-w-md w-full shadow-2xl border border-slate-100 p-6 space-y-6 transform transition-all">
+            <div class="flex space-x-4">
+                <div class="w-12 h-12 rounded-full bg-rose-50 flex items-center justify-center text-rose-600 flex-shrink-0">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold text-slate-900">Selesaikan Ujian?</h3>
+                    <p class="text-sm text-slate-500 mt-1">Apakah Anda yakin ingin mengirim semua jawaban Anda? Tindakan ini tidak dapat dibatalkan.</p>
+                </div>
+            </div>
+
+            <!-- Summary metrics in modal -->
+            <div class="bg-slate-50 rounded-xl p-4 text-xs text-slate-600 space-y-2">
+                <div class="flex justify-between">
+                    <span>Soal Terjawab:</span>
+                    <span id="modal-answered" class="font-bold text-slate-800">0/50</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Masih Ragu-ragu:</span>
+                    <span id="modal-flagged" class="font-bold text-amber-600">0</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Belum Diisi:</span>
+                    <span id="modal-empty" class="font-bold text-rose-600">0</span>
+                </div>
+            </div>
+
+            <div class="flex space-x-3 justify-end">
+                <button onclick="closeSubmitModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition-all">
+                    Batal
+                </button>
+                <button onclick="submitExam()" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-sm shadow-md shadow-rose-600/10 transition-all">
+                    Ya, Kirim Sekarang
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN EXAM LOGIC ENGINE -->
+    <script>
+        // Quiz Data - 50 Comprehensive Questions about Greenfoot basics
+        const questions = [
+            {
+                id: 1,
+                question: "Apa bahasa pemrograman utama yang digunakan untuk menulis kode objek dalam Greenfoot?",
+                options: [
+                    "A. Python",
+                    "B. Java",
+                    "C. C++",
+                    "D. JavaScript",
+                    "E. Kotlin"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Greenfoot dirancang khusus menggunakan bahasa pemrograman Java untuk mengenalkan pemrograman berorientasi objek."
+            },
+            {
+                id: 2,
+                question: "Dua superclass (kelas induk) utama yang otomatis disediakan saat pertama kali membuat proyek Greenfoot adalah...",
+                options: [
+                    "A. Sprite dan Stage",
+                    "B. Screen dan Character",
+                    "C. World dan Actor",
+                    "D. Map dan Object",
+                    "E. Canvas dan Component"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Dalam skenario Greenfoot, dua superclass utamanya adalah 'World' (sebagai latar) dan 'Actor' (sebagai karakter atau objek)."
+            },
+            {
+                id: 3,
+                question: "Method apa yang dijalankan secara terus-menerus dan berulang saat tombol 'Run' ditekan di area antarmuka Greenfoot?",
+                options: [
+                    "A. start()",
+                    "B. run()",
+                    "C. act()",
+                    "D. update()",
+                    "E. main()"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Method act() adalah inti dari perilaku interaktif di Greenfoot. Menekan 'Run' akan memanggil method act() berulang-ulang bagi semua objek di dunia."
+            },
+            {
+                id: 4,
+                question: "Manakah method bawaan kelas Actor yang digunakan untuk memindahkan aktor maju ke depan searah rotasinya?",
+                options: [
+                    "A. move(int distance)",
+                    "B. walk(int step)",
+                    "C. forward(int pixels)",
+                    "D. setLocation(int x, int y)",
+                    "E. translate(int dx, int dy)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Method move(int distance) dari superclass Actor digunakan untuk menggerakkan aktor maju sejauh parameter jarak yang diberikan."
+            },
+            {
+                id: 5,
+                question: "Bagaimana cara membuat objek (instance) baru dari suatu kelas secara manual di editor Greenfoot tanpa menulis kode?",
+                options: [
+                    "A. Double-click pada kelas tersebut",
+                    "B. Drag & Drop langsung dari panel sebelah kanan ke dalam World",
+                    "C. Klik kanan pada kelas Actor yang diinginkan, pilih 'new [NamaKelas]()', lalu tempatkan di World",
+                    "D. Mengetik perintah instantiasi langsung pada konsol terminal",
+                    "E. Menggunakan menu file -> Create Object"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Secara manual di GUI Greenfoot, klik kanan kelas Actor, pilih konstruktor 'new [NamaKelas]()' lalu klik di area World untuk menaruhnya."
+            },
+            {
+                id: 6,
+                question: "Fungsi utama konstruktor (constructor) dari superclass World (seperti: super(600, 400, 1)) adalah untuk...",
+                options: [
+                    "A. Menentukan warna latar belakang dunia",
+                    "B. Mendefinisikan ukuran dunia (lebar, tinggi, dan ukuran pixel per sel)",
+                    "C. Membatasi jumlah aktor maksimum dalam game",
+                    "D. Membuat musik latar belakang secara otomatis",
+                    "E. Menghubungkan dunia dengan database luar"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Panggilan super(600, 400, 1) mendefinisikan dimensi dunia: lebar 600 sel, tinggi 400 sel, dan resolusi ukuran sel sebesar 1 piksel persegi."
+            },
+            {
+                id: 7,
+                question: "Method mana yang digunakan untuk menambahkan sebuah aktor ke dalam dunia pada posisi koordinat tertentu?",
+                options: [
+                    "A. World.add(Actor object, int x, int y)",
+                    "B. Greenfoot.setObject(Actor object, int x, int y)",
+                    "C. addObject(Actor object, int x, int y)",
+                    "D. insertObject(Actor object, int x, int y)",
+                    "E. createActor(Actor object, int x, int y)"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Method addObject(Actor, x, y) milik kelas World berfungsi untuk memposisikan objek Actor di koordinat x dan y tertentu di dalam dunia."
+            },
+            {
+                id: 8,
+                question: "Di mana letak titik koordinat asal (0, 0) pada World di lingkungan Greenfoot?",
+                options: [
+                    "A. Tepat di pusat/tengah-tengah layar",
+                    "B. Pojok kiri atas layar",
+                    "C. Pojok kiri bawah layar",
+                    "D. Pojok kanan bawah layar",
+                    "E. Pojok kanan atas layar"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Sistem koordinat 2D pada Greenfoot menempatkan titik asal (0,0) pada pojok kiri atas dunia."
+            },
+            {
+                id: 9,
+                question: "Apa fungsi dari tombol 'Reset' yang terdapat di bagian bawah layar antarmuka Greenfoot?",
+                options: [
+                    "A. Menghapus semua kode pemrograman yang telah ditulis",
+                    "B. Mengembalikan dunia (World) ke kondisi awal atau instansiasi barunya",
+                    "C. Melakukan kompilasi ulang pada seluruh berkas Java",
+                    "D. Menyimpan proyek secara otomatis ke komputer",
+                    "E. Membuka folder dokumentasi resmi Greenfoot"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Tombol 'Reset' mereset kondisi World kembali ke inisialisasi awal (membuat objek baru dari kelas World)."
+            },
+            {
+                id: 10,
+                question: "Jika Anda memanggil method 'Greenfoot.getRandomNumber(15)', angka acak bulat yang mungkin dihasilkan adalah...",
+                options: [
+                    "A. Dari 1 sampai 15",
+                    "B. Dari 0 sampai 14",
+                    "C. Dari 0 sampai 15",
+                    "D. Bilangan pecahan desimal dari 0.0 sampai 15.0",
+                    "E. Kelipatan 15 saja"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Greenfoot.getRandomNumber(int limit) menghasilkan integer acak antara 0 hingga limit-1. Untuk parameter 15, rentangnya adalah 0 sampai 14."
+            },
+            {
+                id: 11,
+                question: "Bagaimanakah sintaks yang benar untuk memeriksa apakah tombol panah kiri pada keyboard sedang ditekan?",
+                options: [
+                    "A. if (Greenfoot.isKeyDown(\"left\"))",
+                    "B. if (Greenfoot.isKeyPressed(\"left-arrow\"))",
+                    "C. if (Greenfoot.checkKey(\"left\"))",
+                    "D. if (Greenfoot.keyPress(\"arrow-left\"))",
+                    "E. if (Actor.isKeyDown(\"left\"))"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Method statis `Greenfoot.isKeyDown(String keyName)` digunakan untuk mendeteksi penekanan tombol. Nama string untuk tombol arah kiri adalah 'left'."
+            },
+            {
+                id: 12,
+                question: "Perintah 'turn(45)' pada kelas Actor akan menyebabkan objek berputar sebesar 45 derajat kearah...",
+                options: [
+                    "A. Atas secara vertikal",
+                    "B. Berlawanan arah jarum jam (Counter-clockwise)",
+                    "C. Searah jarum jam (Clockwise)",
+                    "D. Kiri secara konstan",
+                    "E. Sesuai arah datangnya mouse"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Di Greenfoot, nilai rotasi positif (seperti 45) akan memutar objek searah jarum jam (clockwise)."
+            },
+            {
+                id: 13,
+                question: "Sintaks yang tepat untuk memutar objek Actor berlawanan arah jarum jam sebesar 90 derajat adalah...",
+                options: [
+                    "A. rotate(-90);",
+                    "B. turn(270);",
+                    "C. turn(-90);",
+                    "D. Jawaban B dan C benar",
+                    "E. Semua jawaban di atas salah"
+                ],
+                correctAnswer: 3, // D
+                explanation: "Memutar -90 derajat berlawanan arah jarum jam menghasilkan orientasi yang sama dengan memutar +270 derajat searah jarum jam."
+            },
+            {
+                id: 14,
+                question: "Method manakah dari kelas World yang digunakan untuk menghapus satu objek Actor tertentu dari simulasi?",
+                options: [
+                    "A. deleteObject(Actor object)",
+                    "B. removeObject(Actor object)",
+                    "C. clearObject(Actor object)",
+                    "D. destroy(Actor object)",
+                    "E. dispose(Actor object)"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Method `removeObject(Actor object)` yang terdapat pada kelas World digunakan untuk melenyapkan objek aktor yang dikirim sebagai argumen."
+            },
+            {
+                id: 15,
+                question: "Untuk memainkan file audio bernama 'victory.mp3' yang berada di folder assets/sounds, kita menggunakan perintah...",
+                options: [
+                    "A. Greenfoot.playAudio(\"victory.mp3\");",
+                    "B. Greenfoot.playSound(\"victory.mp3\");",
+                    "C. Actor.soundPlay(\"victory.mp3\");",
+                    "D. Greenfoot.startSound(\"victory.mp3\");",
+                    "E. new Sound(\"victory.mp3\").play();"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Instruksi statis bawaan Greenfoot untuk memutar suara secara instan adalah `Greenfoot.playSound(String filename)`."
+            },
+            {
+                id: 16,
+                question: "Prinsip dasar pemrograman di mana sebuah subclass mewarisi properti dan method dari superclass-nya disebut...",
+                options: [
+                    "A. Encapsulation (Enkapsulasi)",
+                    "B. Polymorphism (Polimorfisme)",
+                    "C. Inheritance (Pewarisan)",
+                    "D. Abstraction (Abstraksi)",
+                    "E. Association (Asosiasi)"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Pewarisan (Inheritance) memungkinkan kelas turunan (seperti Bee) mewarisi properti dan method milik kelas induk (seperti Actor)."
+            },
+            {
+                id: 17,
+                question: "Dalam diagram kelas Greenfoot, garis panah yang mengarah dari kelas Actor ke kelas Bee menunjukkan bahwa kelas Bee adalah...",
+                options: [
+                    "A. Kelas induk dari Actor",
+                    "B. Objek dari kelas Actor",
+                    "C. Subclass (kelas turunan) dari Actor",
+                    "D. File gambar dari Actor",
+                    "E. Library eksternal Java"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Garis panah tertutup mengarah ke atas menandakan pewarisan (extends), sehingga Bee adalah subclass (turunan) dari Actor."
+            },
+            {
+                id: 18,
+                question: "Deklarasi kelas 'public class Kangaroo extends Actor' mendefinisikan bahwa...",
+                options: [
+                    "A. Kangaroo memiliki instansiasi berupa Actor",
+                    "B. Kangaroo mewarisi seluruh fungsionalitas dasar dari kelas Actor",
+                    "C. Actor adalah turunan langsung dari kelas Kangaroo",
+                    "D. Kangaroo merupakan objek statis dalam game",
+                    "E. Kangaroo tidak dapat menggunakan method act()"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Keyword 'extends' menetapkan hubungan inheritance, yang berarti Kangaroo mewarisi sifat, method, dan variabel dari kelas Actor."
+            },
+            {
+                id: 19,
+                question: "Secara default, rotasi (orientation) sudut dari objek Actor yang baru pertama kali diciptakan di dalam World mengarah ke arah mana?",
+                options: [
+                    "A. Atas (90 derajat)",
+                    "B. Kiri (180 derajat)",
+                    "C. Kanan (0 derajat)",
+                    "D. Bawah (270 derajat)",
+                    "E. Menyesuaikan posisi acak"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Di Greenfoot, arah rotasi 0 derajat adalah menghadap ke arah kanan (Timur)."
+            },
+            {
+                id: 20,
+                question: "Jika rotasi suatu objek diatur ke sudut 90 derajat dengan 'setRotation(90)', maka objek tersebut akan menghadap ke...",
+                options: [
+                    "A. Kanan",
+                    "B. Atas",
+                    "C. Kiri",
+                    "D. Bawah",
+                    "E. Serong Kiri Atas"
+                ],
+                correctAnswer: 3, // D
+                explanation: "Sistem koordinat rotasi lingkaran di Greenfoot searah jarum jam: 0 derajat (Kanan), 90 derajat (Bawah), 180 derajat (Kiri), 270 derajat (Atas)."
+            },
+            {
+                id: 21,
+                question: "Method manakah dari kelas Actor yang sering digunakan untuk mendeteksi apakah objek tersebut telah menyentuh batas tepi dari World?",
+                options: [
+                    "A. checkWorldEdge()",
+                    "B. isAtEdge()",
+                    "C. touchBorder()",
+                    "D. getX() == 0",
+                    "E. getEdge()"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Method `isAtEdge()` mengembalikan nilai boolean (true/false) untuk mendeteksi apakah koordinat pusat aktor berada di tepi dunia."
+            },
+            {
+                id: 22,
+                question: "Metode 'isTouching(Class cls)' milik kelas Actor berguna untuk mendeteksi...",
+                options: [
+                    "A. Jika kursor mouse menyentuh aktor",
+                    "B. Jika aktor menyentuh batas layar world",
+                    "C. Jika aktor menyentuh instance (objek) dari kelas tertentu yang kita spesifikasikan",
+                    "D. Jika ada tombol keyboard yang menyentuh input",
+                    "E. Jika aktor sedang diam tidak bergerak"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Method isTouching() mendeteksi tabrakan atau tumpang tindih gambar antara aktor pemanggil dengan aktor lain dari kelas yang ditentukan."
+            },
+            {
+                id: 23,
+                question: "Jika kita ingin menghapus objek makanan (kelas Food) segera setelah aktor utama menabraknya, kita dapat menggunakan method...",
+                options: [
+                    "A. removeTouching(Food.class)",
+                    "B. deleteTouching(Food)",
+                    "C. removeObject(Food)",
+                    "D. isTouching(Food.class).remove()",
+                    "E. clearTouching(Food.class)"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Perintah `removeTouching(Food.class)` digunakan untuk langsung melenyapkan objek bertipe kelas Food yang sedang disentuh."
+            },
+            {
+                id: 24,
+                question: "Untuk mengambil koordinat posisi horizontal (mendatar) saat ini dari sebuah objek Actor, kita memanggil method...",
+                options: [
+                    "A. getHorizontal()",
+                    "B. getX()",
+                    "C. getXPosition()",
+                    "D. getCoordX()",
+                    "E. getWidth()"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Method `getX()` mengembalikan nilai bertipe data integer yang menunjukkan koordinat posisi x (horizontal) aktor saat ini."
+            },
+            {
+                id: 25,
+                question: "Untuk mendapatkan koordinat posisi vertikal (tegak) saat ini dari sebuah objek Actor, kita memanggil method...",
+                options: [
+                    "A. getVertical()",
+                    "B. getY()",
+                    "C. getYPosition()",
+                    "D. getCoordY()",
+                    "E. getHeight()"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Method `getY()` mengembalikan nilai bertipe data integer yang menunjukkan koordinat posisi y (vertikal) aktor saat ini."
+            },
+            {
+                id: 26,
+                question: "File kode sumber pemrograman Java yang kita tulis di dalam editor Greenfoot disimpan dengan ekstensi berkas...",
+                options: [
+                    "A. .gft",
+                    "B. .class",
+                    "C. .jar",
+                    "D. .java",
+                    "E. .greenfoot"
+                ],
+                correctAnswer: 3, // D
+                explanation: "Semua berkas kode program yang ditulis manusia menggunakan bahasa Java disimpan dengan ekstensi format file '.java'."
+            },
+            {
+                id: 27,
+                question: "Proses menerjemahkan kode sumber Java (.java) menjadi bytecode (.class) agar komputer/Greenfoot dapat melaksanakannya dinamakan...",
+                options: [
+                    "A. Eksekusi (Execution)",
+                    "B. Kompilasi (Compilation/Compile)",
+                    "C. Impor (Importing)",
+                    "D. Simpan (Saving)",
+                    "E. Rendering"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Kompilasi (Compilation) menerjemahkan baris kode bahasa Java (tingkat tinggi) menjadi bytecode yang dipahami oleh Java Virtual Machine."
+            },
+            {
+                id: 28,
+                question: "Apa arti dari tombol kompilasi (Compile) yang berwarna abu-abu/tidak aktif (disabled) di editor Greenfoot?",
+                options: [
+                    "A. Terjadi kesalahan sintaks (Error) yang sangat parah",
+                    "B. Seluruh kode program sudah terkompilasi dengan sukses dan tidak ada perubahan baru",
+                    "C. Greenfoot mengalami crash sistem",
+                    "D. Proyek belum disimpan ke harddisk",
+                    "E. Mode pengeditan sedang dikunci oleh administrator"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Jika tombol Compile berubah warna menjadi abu-abu, berarti tidak ada kode baru yang perlu dikompilasi ulang."
+            },
+            {
+                id: 29,
+                question: "Metode statis apakah yang digunakan jika kita ingin menghentikan simulasi/game Greenfoot secara langsung melalui baris program Java?",
+                options: [
+                    "A. System.exit(0);",
+                    "B. Greenfoot.stop();",
+                    "C. World.terminate();",
+                    "D. stopSimulation();",
+                    "E. Greenfoot.pause();"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Pemanggilan statis `Greenfoot.stop()` akan memberhentikan laju eksekusi game, sama seperti menekan tombol 'Pause' pada GUI."
+            },
+            {
+                id: 30,
+                question: "Pada penulisan konstruktor World: 'super(800, 600, 1);', angka parameter ketiga (1) menentukan...",
+                options: [
+                    "A. Jumlah maksimum aktor yang boleh masuk ke dunia",
+                    "B. Ukuran piksel dari masing-masing sel grid dalam dunia tersebut",
+                    "C. Kecepatan gerakan (speed) objek game",
+                    "D. Versi rilis dari framework Greenfoot yang dipakai",
+                    "E. Kerapatan warna latar belakang"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Angka ketiga adalah 'cell size'. Jika diset ke 1, berarti satu sel grid berukuran 1x1 piksel (cocok untuk game non-grid 2D)."
+            },
+            {
+                id: 31,
+                question: "Bagaimanakah cara mendeteksi apakah pengguna telah mengklik suatu objek (misal: objek Tombol) menggunakan pointer mouse?",
+                options: [
+                    "A. if (Greenfoot.mouseClicked(this))",
+                    "B. if (this.isClicked())",
+                    "C. if (Greenfoot.isMouseDown(\"left\"))",
+                    "D. if (MouseInfo.isClicked(this))",
+                    "E. if (Greenfoot.mouseOver(this))"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Method statis `Greenfoot.mouseClicked(Object obj)` mengembalikan nilai boolean true jika target objek tertentu menerima klik mouse."
+            },
+            {
+                id: 32,
+                question: "Method bawaan khusus yang dipanggil sekali saja secara otomatis ketika sebuah objek instansi baru diciptakan dinamakan...",
+                options: [
+                    "A. Method act()",
+                    "B. Constructor",
+                    "C. Destructor",
+                    "D. Getter dan Setter",
+                    "E. Method main()"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Konstruktor (Constructor) adalah method dengan nama yang persis sama dengan nama kelasnya dan dipanggil saat inisiasi objek baru."
+            },
+            {
+                id: 33,
+                question: "Method 'isAtEdge()' mengembalikan jenis tipe data apa?",
+                options: [
+                    "A. int",
+                    "B. float",
+                    "C. String",
+                    "D. boolean",
+                    "E. char"
+                ],
+                correctAnswer: 3, // D
+                explanation: "Karena method `isAtEdge()` menguji sebuah kondisi (ya/tidak), ia mengembalikan tipe data 'boolean' (true atau false)."
+            },
+            {
+                id: 34,
+                question: "Manakah di bawah ini yang mematuhi konvensi tata nama penulisan Class dalam standar bahasa pemrograman Java?",
+                options: [
+                    "A. crazyMonkey",
+                    "B. crazy_monkey",
+                    "C. CrazyMonkey",
+                    "D. CRAZYMONKEY",
+                    "E. crazy.monkey"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Dalam konvensi penamaan kelas Java, kita menggunakan CamelCase (huruf pertama setiap kata diawali dengan huruf kapital, misal: CrazyMonkey)."
+            },
+            {
+                id: 35,
+                question: "Manakah di bawah ini yang mematuhi konvensi tata nama penulisan Method dalam standar bahasa pemrograman Java?",
+                options: [
+                    "A. moveAndTurn",
+                    "B. MoveAndTurn",
+                    "C. move_and_turn",
+                    "D. MOVEANDTURN",
+                    "E. move and turn"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Penamaan method menggunakan lowerCamelCase (kata pertama diawali huruf kecil, kata berikutnya berawalan huruf kapital, misal: moveAndTurn)."
+            },
+            {
+                id: 36,
+                question: "Apakah arti dari kata kunci 'void' di depan deklarasi suatu method (misal: public void act())?",
+                options: [
+                    "A. Method tersebut bersifat rahasia dan tidak bisa diwariskan",
+                    "B. Method tersebut tidak mengembalikan nilai apapun (no return value)",
+                    "C. Method tersebut hanya boleh diisi satu baris perintah",
+                    "D. Method tersebut akan berjalan terus tanpa henti",
+                    "E. Method tersebut tidak memerlukan parameter"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Keyword 'void' digunakan untuk menegaskan bahwa suatu method tidak mengembalikan nilai hasil komputasi apa pun setelah dijalankan."
+            },
+            {
+                id: 37,
+                question: "Cara mengubah aset visual gambar dari sebuah Actor secara visual lewat antarmuka grafis (GUI) Greenfoot adalah...",
+                options: [
+                    "A. Melakukan drag berkas .png dari desktop ke editor",
+                    "B. Klik kanan pada kelas Actor -> Set Image...",
+                    "C. Klik dua kali pada gambar di editor kode",
+                    "D. Mengubah tipe file java menjadi png",
+                    "E. Melalui menu Edit -> Change Sprite"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Mengganti gambar kelas Actor secara langsung di GUI dilakukan dengan mengklik kanan kelas tersebut di panel kelas sebelah kanan, lalu pilih 'Set Image'."
+            },
+            {
+                id: 38,
+                question: "Bagaimanakah baris sintaks Java yang benar untuk menginstansiasi sebuah objek bernama 'laser' dari kelas bernama 'Laser'?",
+                options: [
+                    "A. laser = Laser();",
+                    "B. Laser laser = new Laser();",
+                    "C. new Laser() = laser;",
+                    "D. laser Laser = new Laser();",
+                    "E. Laser.create(laser);"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Struktur standar instansiasi objek di Java adalah: [NamaKelas] [namaObjek] = new [NamaKelas]();"
+            },
+            {
+                id: 39,
+                question: "Apakah kegunaan utama dari slider kontrol 'Speed' yang terletak di bagian dasar jendela utama Greenfoot?",
+                options: [
+                    "A. Mengatur kecepatan loading saat melakukan kompilasi berkas",
+                    "B. Mengatur seberapa cepat simulasi berjalan (durasi jeda antar-siklus act())",
+                    "C. Meningkatkan performa kartu grafis komputer",
+                    "D. Mempercepat gerakan langkah piksel pada method move()",
+                    "E. Menyesuaikan kecepatan reproduksi audio"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Slider 'Speed' mengontrol delay/jeda waktu antar siklus act(). Semakin tinggi slider, semakin cepat simulasi dijalankan."
+            },
+            {
+                id: 40,
+                question: "Jika kita ingin memrogram objek Actor agar terus bergerak vertikal ke ATAS secara berkala, perintah koordinat yang tepat adalah...",
+                options: [
+                    "A. setLocation(getX(), getY() + 5);",
+                    "B. setLocation(getX(), getY() - 5);",
+                    "C. setLocation(getX() + 5, getY());",
+                    "D. setLocation(getX() - 5, getY());",
+                    "E. moveUp(5);"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Karena koordinat Y bernilai 0 di pojok atas, maka untuk bergerak ke atas kita harus mengurangi nilai koordinat Y saat ini."
+            },
+            {
+                id: 41,
+                question: "Jika kita ingin memrogram objek Actor agar bergerak ke arah KIRI secara berkala tanpa merubah rotasi gambar, perintah koordinat yang tepat adalah...",
+                options: [
+                    "A. setLocation(getX() + 5, getY());",
+                    "B. setLocation(getX(), getY() - 5);",
+                    "C. setLocation(getX() - 5, getY());",
+                    "D. setLocation(getX(), getY() + 5);",
+                    "E. moveLeft(5);"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Koordinat X bernilai 0 di sebelah kiri. Mengurangi nilai X dengan `getX() - 5` akan menggeser posisi aktor ke arah kiri."
+            },
+            {
+                id: 42,
+                question: "Kelas pustaka (library) bawaan manakah yang digunakan untuk memanipulasi, menggambar, atau merotasikan gambar dari Actor secara terprogram?",
+                options: [
+                    "A. GreenfootSprite",
+                    "B. GreenfootImage",
+                    "C. ImageManager",
+                    "D. ActorImage",
+                    "E. BufferedImage"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Kelas `GreenfootImage` menyediakan metode dinamis untuk memproses pengubahan gambar, teks, dan detail grafis objek di runtime."
+            },
+            {
+                id: 43,
+                question: "Untuk mendeteksi letak detail posisi koordinat kursor mouse saat ini, kita memanggil method statis...",
+                options: [
+                    "A. Greenfoot.getMouseX()",
+                    "B. Greenfoot.getMouseInfo()",
+                    "C. MouseInfo.getCursor()",
+                    "D. Greenfoot.getMouseState()",
+                    "E. Actor.getMouseCoordinate()"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Method `Greenfoot.getMouseInfo()` mengembalikan objek `MouseInfo` yang memuat koordinat X, Y, tombol, dan status klik mouse."
+            },
+            {
+                id: 44,
+                question: "Mengapa kita diharuskan menekan tombol 'Compile' setelah melakukan modifikasi pada kode program Java?",
+                options: [
+                    "A. Agar program otomatis tersimpan secara aman di awan (cloud)",
+                    "B. Agar perubahan logika program terbaru diterjemahkan ke bahasa biner dan diaplikasikan di simulasi",
+                    "C. Untuk membersihkan file sampah komputer",
+                    "D. Agar kualitas resolusi gambar di Greenfoot meningkat",
+                    "E. Agar kecepatan game meningkat dua kali lipat"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Proses kompilasi menerjemahkan perubahan teks program yang baru diubah menjadi instruksi yang siap dijalankan oleh komputer."
+            },
+            {
+                id: 45,
+                question: "Struktur baris instruksi 'if (Greenfoot.isKeyDown(\"space\"))' digunakan untuk memproses aksi saat pengguna...",
+                options: [
+                    "A. Membuka tab pengaturan",
+                    "B. Menekan tombol Spasi pada papan ketik",
+                    "C. Mengklik ganda mouse",
+                    "D. Keluar dari aplikasi game",
+                    "E. Membuka lembar kerja baru"
+                ],
+                correctAnswer: 1, // B
+                explanation: "String 'space' merepresentasikan tombol spasi pada keyboard."
+            },
+            {
+                id: 46,
+                question: "Di bawah ini yang termasuk dalam kelompok Superclass bawaan yang diwarisi di lingkungan Greenfoot adalah...",
+                options: [
+                    "A. Actor dan World",
+                    "B. Greenfoot dan GreenfootImage",
+                    "C. Scanner dan System",
+                    "D. Jawaban A dan B benar",
+                    "E. Semua jawaban salah"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Hanya Actor dan World yang berperan sebagai Superclass di mana kita dapat membuat sub-kelasnya di panel sebelah kanan."
+            },
+            {
+                id: 47,
+                question: "Apa nilai keluaran yang dihasilkan jika kita memanggil method 'getWidth()' pada objek bertipe World?",
+                options: [
+                    "A. Total berat objek",
+                    "B. Lebar dimensi dunia dalam satuan jumlah sel grid",
+                    "C. Tinggi dimensi dunia dalam satuan piksel",
+                    "D. Jumlah aktor yang berada di layar",
+                    "E. Kecepatan rotasi layar"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Method `getWidth()` dari kelas World mengembalikan nilai lebar horizontal dunia dalam satuan jumlah sel grid."
+            },
+            {
+                id: 48,
+                question: "Bagaimanakah cara mengubah gambar suatu Actor secara dinamis lewat baris kode pemrograman?",
+                options: [
+                    "A. setImage(new GreenfootImage(\"gambar.png\"));",
+                    "B. changeSprite(\"gambar.png\");",
+                    "C. setActorImage(\"gambar.png\");",
+                    "D. Greenfoot.setImage(this, \"gambar.png\");",
+                    "E. updateImage(\"gambar.png\");"
+                ],
+                correctAnswer: 0, // A
+                explanation: "Method `setImage(GreenfootImage img)` dari superclass Actor digunakan untuk mengubah tampilan visual aktor di tengah jalannya simulasi."
+            },
+            {
+                id: 49,
+                question: "Jika di dalam method act() tertulis perintah 'move(1);', apa yang terjadi jika tombol 'Run' ditekan?",
+                options: [
+                    "A. Objek bergerak sekali saja sejauh 1 piksel lalu berhenti",
+                    "B. Objek akan bergerak secara terus menerus sejauh 1 piksel per siklus act()",
+                    "C. Objek berputar terus menerus",
+                    "D. Simulasi otomatis dihentikan",
+                    "E. Layar akan bergeser"
+                ],
+                correctAnswer: 1, // B
+                explanation: "Karena act() dieksekusi secara berulang pada mode Run, pemanggilan move(1) di dalamnya menyebabkan gerakan berlanjut secara konsisten."
+            },
+            {
+                id: 50,
+                question: "Perintah 'showText(\"Game Over\", 400, 300)' digunakan untuk menampilkan tulisan di layar. Di dalam kelas manakah method ini didefinisikan secara bawaan?",
+                options: [
+                    "A. Actor",
+                    "B. Greenfoot",
+                    "C. World",
+                    "D. GreenfootImage",
+                    "E. MouseInfo"
+                ],
+                correctAnswer: 2, // C
+                explanation: "Method `showText(String msg, int x, int y)` didefinisikan pada kelas `World` untuk mempermudah pencetakan teks informasi di koordinat tertentu di atas latar belakang."
+            }
+        ];
+
+        // State variables
+        let currentQuestionIndex = 0;
+        let answers = new Array(50).fill(null); // stores index of selected option (0 to 4)
+        let flags = new Array(50).fill(false); // stores boolean flag (ragu-ragu)
+        let userName = "";
+        let userClass = "";
+        let examTimer = null;
+        let timeLeft = 60 * 60; // 60 minutes in seconds
+        let examStarted = false;
+        let examSubmitted = false;
+
+        // Initialize App
+        window.onload = function() {
+            lucide.createIcons();
+            generateNavGrid();
+        };
+
+        // Render Question Navigation Grid in Sidebar
+        function generateNavGrid() {
+            const container = document.getElementById("nav-grid-container");
+            container.innerHTML = "";
+            for (let i = 0; i < 50; i++) {
+                const btn = document.createElement("button");
+                btn.id = `nav-btn-${i}`;
+                btn.innerText = i + 1;
+                btn.className = getNavButtonClass(i);
+                btn.onclick = () => jumpToQuestion(i);
+                container.appendChild(btn);
+            }
+        }
+
+        // Return class based on state
+        function getNavButtonClass(index) {
+            const baseClass = "h-10 text-xs font-bold rounded-xl border flex items-center justify-center transition-all cursor-pointer ";
+            if (index === currentQuestionIndex) {
+                return baseClass + "bg-indigo-600 text-white border-indigo-700 shadow-md shadow-indigo-600/20";
+            } else if (flags[index]) {
+                return baseClass + "bg-amber-500 text-white border-amber-600 shadow-md shadow-amber-500/10";
+            } else if (answers[index] !== null) {
+                return baseClass + "bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/10";
+            } else {
+                return baseClass + "bg-slate-100 text-slate-600 border-slate-200 hover:bg-slate-200";
+            }
+        }
+
+        // Update indicator text in layout
+        function updateNavState() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            document.getElementById("answered-indicator").innerText = `${answeredCount}/50 Terjawab`;
+            
+            for (let i = 0; i < 50; i++) {
+                const btn = document.getElementById(`nav-btn-${i}`);
+                if (btn) btn.className = getNavButtonClass(i);
+            }
+        }
+
+        // Start Exam handler
+        function startExam(event) {
+            event.preventDefault();
+            
+            userName = document.getElementById("student-name").value.trim();
+            userClass = document.getElementById("student-class").value.trim();
+
+            if (!userName || !userClass) return;
+
+            // Set layout info
+            document.getElementById("display-user-name").innerText = userName;
+            document.getElementById("display-user-class").innerText = userClass;
+
+            // Page transitions
+            document.getElementById("login-section").classList.add("hidden");
+            document.getElementById("exam-section").classList.remove("hidden");
+            document.getElementById("timer-container").classList.remove("hidden");
+
+            // Set flags
+            examStarted = true;
+            renderQuestion();
+            startTimer();
+        }
+
+        // Timer control
+        function startTimer() {
+            examTimer = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(examTimer);
+                    autoSubmitExam();
+                } else {
+                    timeLeft--;
+                    updateTimerDisplay();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            const displayStr = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            const countdownEl = document.getElementById("countdown");
+            
+            countdownEl.innerText = displayStr;
+
+            // Warning style if below 5 minutes
+            if (timeLeft < 300) {
+                countdownEl.classList.add("text-rose-400");
+                countdownEl.classList.remove("text-white");
+            }
+        }
+
+        // Render Current Question
+        function renderQuestion() {
+            const q = questions[currentQuestionIndex];
+            
+            // Header
+            document.getElementById("current-question-num").innerText = currentQuestionIndex + 1;
+            
+            // Flag state
+            const btnFlag = document.getElementById("btn-flag");
+            const textFlag = document.getElementById("text-flag");
+            const iconFlag = document.getElementById("icon-flag");
+            if (flags[currentQuestionIndex]) {
+                btnFlag.className = "flex items-center space-x-2 text-amber-600 bg-amber-50 font-bold text-sm transition-all px-3 py-1.5 rounded-lg border border-amber-200";
+                textFlag.innerText = "Ragu-ragu (Ditandai)";
+                iconFlag.setAttribute("data-lucide", "bookmark-check");
+            } else {
+                btnFlag.className = "flex items-center space-x-2 text-slate-500 hover:text-amber-600 font-medium text-sm transition-all px-3 py-1.5 rounded-lg hover:bg-slate-50";
+                textFlag.innerText = "Tandai Ragu-ragu";
+                iconFlag.setAttribute("data-lucide", "bookmark");
+            }
+
+            // Question Text
+            document.getElementById("question-text").innerText = q.question;
+
+            // Render Options
+            const container = document.getElementById("options-container");
+            container.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = answers[currentQuestionIndex] === idx;
+                
+                const optButton = document.createElement("button");
+                optButton.onclick = () => selectOption(idx);
+                optButton.className = `w-full text-left p-4 rounded-xl border-2 flex items-center justify-between transition-all duration-200 cursor-pointer ${
+                    isSelected 
+                    ? "bg-indigo-50 border-indigo-600 text-indigo-900 font-semibold shadow-sm" 
+                    : "bg-white border-slate-100 hover:border-slate-300 text-slate-700 hover:bg-slate-50"
+                }`;
+
+                const textSpan = document.createElement("span");
+                textSpan.innerText = opt;
+                optButton.appendChild(textSpan);
+
+                // Add radio indicator
+                const indicator = document.createElement("div");
+                indicator.className = `w-5 h-5 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                    isSelected ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-300 bg-white"
+                }`;
+                if (isSelected) {
+                    indicator.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5"></i>`;
+                }
+                optButton.appendChild(indicator);
+
+                container.appendChild(optButton);
+            });
+
+            // Handle prev/next state buttons
+            document.getElementById("btn-prev").disabled = currentQuestionIndex === 0;
+            
+            // Adjust Next Button text for final question
+            const btnNext = document.getElementById("btn-next");
+            if (currentQuestionIndex === 49) {
+                btnNext.innerHTML = `<span>Selesai & Kirim</span> <i data-lucide="check-square" class="w-5 h-5"></i>`;
+                btnNext.onclick = openSubmitModal;
+                btnNext.className = "flex items-center space-x-2 text-white bg-rose-600 hover:bg-rose-750 font-semibold px-5 py-2.5 rounded-xl transition-all";
+            } else {
+                btnNext.innerHTML = `<span>Berikutnya</span> <i data-lucide="chevron-right" class="w-5 h-5"></i>`;
+                btnNext.onclick = nextQuestion;
+                btnNext.className = "flex items-center space-x-2 text-white bg-indigo-600 hover:bg-indigo-700 font-semibold px-5 py-2.5 rounded-xl transition-all";
+            }
+
+            updateNavState();
+            lucide.createIcons();
+        }
+
+        // Select option index
+        function selectOption(index) {
+            answers[currentQuestionIndex] = index;
+            // Uncheck "ragu-ragu" automatically once chosen
+            flags[currentQuestionIndex] = false;
+            renderQuestion();
+        }
+
+        // Toggle Flag status (ragu-ragu)
+        function toggleFlag() {
+            flags[currentQuestionIndex] = !flags[currentQuestionIndex];
+            renderQuestion();
+        }
+
+        // Navigate Buttons
+        function prevQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < 49) {
+                currentQuestionIndex++;
+                renderQuestion();
+            }
+        }
+
+        function jumpToQuestion(index) {
+            currentQuestionIndex = index;
+            renderQuestion();
+        }
+
+        // Submit Logic & Modal handlers
+        function openSubmitModal() {
+            const answeredCount = answers.filter(a => a !== null).length;
+            const flaggedCount = flags.filter(f => f === true).length;
+            const emptyCount = 50 - answeredCount;
+
+            document.getElementById("modal-answered").innerText = `${answeredCount}/50`;
+            document.getElementById("modal-flagged").innerText = flaggedCount;
+            document.getElementById("modal-empty").innerText = emptyCount;
+
+            document.getElementById("submit-modal").classList.remove("hidden");
+        }
+
+        function closeSubmitModal() {
+            document.getElementById("submit-modal").classList.add("hidden");
+        }
+
+        function autoSubmitExam() {
+            clearInterval(examTimer);
+            submitExam();
+        }
+
+        function submitExam() {
+            examSubmitted = true;
+            clearInterval(examTimer);
+            
+            // Hide modal & exam section, show results
+            document.getElementById("submit-modal").classList.add("hidden");
+            document.getElementById("exam-section").classList.add("hidden");
+            document.getElementById("timer-container").classList.add("hidden");
+            document.getElementById("results-section").classList.remove("hidden");
+
+            // Calculate score
+            let correctCount = 0;
+            let incorrectCount = 0;
+            let unansweredCount = 0;
+
+            questions.forEach((q, i) => {
+                if (answers[i] === null) {
+                    unansweredCount++;
+                } else if (answers[i] === q.correctAnswer) {
+                    correctCount++;
+                } else {
+                    incorrectCount++;
+                }
+            });
+
+            const finalScore = Math.round((correctCount / 50) * 100);
+            
+            // Set stats details
+            document.getElementById("result-student-name").innerText = userName;
+            document.getElementById("result-student-class").innerText = userClass;
+            document.getElementById("display-final-score").innerText = finalScore;
+            document.getElementById("display-score-fraction").innerText = `${correctCount} dari 50 Soal Benar`;
+            
+            document.getElementById("stat-correct").innerText = correctCount;
+            document.getElementById("stat-incorrect").innerText = incorrectCount;
+            document.getElementById("stat-unanswered").innerText = unansweredCount;
+
+            // KKM check (e.g. 75)
+            const isPassed = finalScore >= 75;
+            const statusContainer = document.getElementById("status-badge-container");
+            const statusText = document.getElementById("result-status-text");
+
+            if (isPassed) {
+                statusContainer.className = "px-4 py-2 rounded-xl text-center w-full bg-emerald-50 text-emerald-700";
+                statusText.innerText = "LULUS";
+            } else {
+                statusContainer.className = "px-4 py-2 rounded-xl text-center w-full bg-rose-50 text-rose-700";
+                statusText.innerText = "TIDAK LULUS";
+            }
+
+            // Render Detailed Review Elements
+            renderAnswerReview();
+        }
+
+        // Render Answer Key with Explanations
+        function renderAnswerReview() {
+            const reviewContainer = document.getElementById("review-list-container");
+            reviewContainer.innerHTML = "";
+
+            questions.forEach((q, i) => {
+                const userAnswerIdx = answers[i];
+                const isCorrect = userAnswerIdx === q.correctAnswer;
+                const isUnanswered = userAnswerIdx === null;
+
+                const card = document.createElement("div");
+                card.className = `bg-white rounded-2xl shadow-sm border p-6 space-y-4 review-card-item transition-all ${
+                    isUnanswered ? "border-slate-200 border-l-8 border-l-slate-400" :
+                    isCorrect ? "border-emerald-200 border-l-8 border-l-emerald-500" : "border-rose-200 border-l-8 border-l-rose-500"
+                }`;
+                card.setAttribute("data-status", isUnanswered ? "unanswered" : (isCorrect ? "correct" : "incorrect"));
+
+                // Header status
+                let statusHeaderStr = "";
+                if (isUnanswered) {
+                    statusHeaderStr = `<span class="text-xs font-bold text-slate-500 flex items-center"><i data-lucide="help-circle" class="w-4 h-4 mr-1"></i> Tidak Dijawab</span>`;
+                } else if (isCorrect) {
+                    statusHeaderStr = `<span class="text-xs font-bold text-emerald-600 flex items-center"><i data-lucide="check" class="w-4 h-4 mr-1"></i> Jawaban Anda Benar</span>`;
+                } else {
+                    statusHeaderStr = `<span class="text-xs font-bold text-rose-600 flex items-center"><i data-lucide="x" class="w-4 h-4 mr-1"></i> Jawaban Anda Salah</span>`;
+                }
+
+                // Options list markup highlighting correct and user choices
+                let optionsMarkup = "";
+                q.options.forEach((opt, oIdx) => {
+                    let optBg = "bg-slate-50 border-slate-100 text-slate-700";
+                    let checkIcon = "";
+
+                    if (oIdx === q.correctAnswer) {
+                        // Correct option style
+                        optBg = "bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold";
+                        checkIcon = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600 ml-2"></i>`;
+                    } else if (oIdx === userAnswerIdx) {
+                        // Wrong user selected option style
+                        optBg = "bg-rose-50 border-rose-200 text-rose-900 font-semibold";
+                        checkIcon = `<i data-lucide="x-circle" class="w-4 h-4 text-rose-600 ml-2"></i>`;
+                    }
+
+                    optionsMarkup += `
+                        <div class="p-3 border rounded-xl flex justify-between items-center text-sm ${optBg}">
+                            <span>${opt}</span>
+                            ${checkIcon}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-bold text-slate-400 tracking-wider">SOAL #${q.id}</span>
+                        ${statusHeaderStr}
+                    </div>
+                    
+                    <h4 class="text-slate-800 font-bold leading-relaxed">${q.question}</h4>
+                    
+                    <div class="grid grid-cols-1 gap-2 mt-2">
+                        ${optionsMarkup}
+                    </div>
+
+                    <!-- Explanations Box -->
+                    <div class="mt-4 bg-indigo-50 border border-indigo-100 rounded-xl p-4 text-xs leading-relaxed text-indigo-950">
+                        <p class="font-bold text-indigo-900 flex items-center mb-1">
+                            <i data-lucide="info" class="w-4 h-4 mr-1"></i> Pembahasan / Penjelasan:
+                        </p>
+                        ${q.explanation}
+                    </div>
+                `;
+
+                reviewContainer.appendChild(card);
+            });
+
+            lucide.createIcons();
+        }
+
+        // Filter Function on Review Page
+        function filterReviews() {
+            const filterValue = document.getElementById("review-filter").value;
+            const cards = document.querySelectorAll(".review-card-item");
+
+            cards.forEach(card => {
+                const status = card.getAttribute("data-status");
+                if (filterValue === "all" || status === filterValue) {
+                    card.classList.remove("hidden");
+                } else {
+                    card.classList.add("hidden");
+                }
+            });
+        }
+    </script>
+</body>
+</html>
